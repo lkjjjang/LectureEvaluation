@@ -7,43 +7,24 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>한양사이버대 강의평가</title>
 	<!-- 부트스트랩 CSS 추가하기 -->
-	<link rel="stylesheet" 
-			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
-			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" 
-			crossorigin="anonymous">
-	<!-- 커스텀 CSS 추가하기 -->
-	<link rel="stylesheet" href="./css/custom.css">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"> 
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet"> 
 	
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"> 
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> 
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+	<script src=" https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/lang/summernote-ko-KR.min.js"></script>
 	
 </head>
 <body>
-
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="index.jsp">한양사이버대 강의평가</a>	
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div id="navbar" class="collapse navbar-collapse">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="lectureBoardController?pageNumber=1">강의평가</a>
-				</li>
-				<li class="nav-item active">
-					<a class="nav-link" href="freeBoardController?pageNumber=1">자유게시판</a>
-				</li>
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown" href="index.jsp">
-						회원관리
-					</a>
-					<div class="dropdown-menu" aria-labelledby="dropdown">
-						<a class="dropdown-item" href="userLogout.jsp">로그아웃</a>
-					</div>
-				</li>
-			</ul>
-		</div>	
-	</nav>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	
 	<div class="container">
+		글쓰기
 		<div>
 			<form method="post" action="freeBoardRegisterController">
 				<table class="table">
@@ -61,7 +42,7 @@
 							<td colspan="2"><input type="text" class="form-control" placeholder="글 제목" name="title" maxlength="50"></td>
 						</tr>
 						<tr>
-							<td colspan="2"><textarea name="content" class="summernote" maxlength="2048"></textarea></td>
+							<td colspan="2"><textarea id="summernote" name="content" class="summernote" maxlength="2048"></textarea></td>
 						</tr>
 						<tr>
 							<td colspan="2">
@@ -77,27 +58,11 @@
 	<footer class="bg-dark mt-4 p-5 text-center" style="color: #FFFFFF;">
 		Copyright &copy; 2021이기주All Rights Reserved.
 	</footer>
-	
-    
-	<script src="https://code.jquery.com/jquery-3.6.0.js"
-  			integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-  			crossorigin="anonymous">
-	</script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
-			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" 
-			crossorigin="anonymous">
-	</script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" 
-			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
-			crossorigin="anonymous">
-	</script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/lang/summernote-ko-KR.min.js"></script>
-    <script>
+   	<script>
 	    $(document).ready(function() {
 	    	//여기 아래 부분
-	    	$('.summernote').summernote({
-	    		  height: 300,                 // 에디터 높이
+	    	$('#summernote').summernote({
+	    		  height: 300,                 // 에디터 높이 
 	    		  minHeight: null,             // 최소 높이
 	    		  maxHeight: null,             // 최대 높이
 	    		  focus: true,                  // 에디터 로딩후 포커스를 맞출지 여부
@@ -113,12 +78,19 @@
 	  			    ['para', ['ul', 'ol', 'paragraph']],
 	  			    ['height', ['height']],
 	  			    ['insert',['picture','link','video']],
-	  			    ['view', ['fullscreen', 'help']]],
+	  			    ['view', ['fullscreen', 'help']]
+	  			  ],
 	  			 fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
 	  			 fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
 	  			 callbacks: {	//여기 부분이 이미지를 첨부하는 부분
 					onImageUpload : function(files) {
-						uploadSummernoteImageFile(files[0],this);
+						console.log('11111111111111');
+						
+						
+						for (var i = 0; i < files.length; i++) {
+							uploadSummernoteImageFile(files[i]);
+						}
+						
 					},
 					onPaste: function (e) {
 						var clipboardData = e.originalEvent.clipboardData;
@@ -129,25 +101,29 @@
 							}
 						}
 					}
-				 }
+				}
 	    	});
 	    });
 	    
-	    /**
-		* 이미지 파일 업로드
-		*/
-		function uploadSummernoteImageFile(file, editor) {
+	    
+	    
+		function uploadSummernoteImageFile(file) {
+			console.log(file.name);
 			data = new FormData();
 			data.append("file", file);
 			$.ajax({
 				data : data,
-				type : "POST",
-				url : "/uploadSummernoteImageFile",
-				contentType : false,
-				processData : false,
-				success : function(data) {
+				type : "post",
+				url : "uploadSummernoteImageFile",
+				cache: false,
+		        contentType: false,
+		        processData: false,
+		        //enctype: "multipart/form-data",
+				success : function(response) {
+					console.log("response")
 	            	//항상 업로드된 파일의 url이 있어야 한다.
-					$(editor).summernote('insertImage', data.url);
+					$('#summernote').summernote('insertImage', response);
+					console.log("bbbbbb")
 				}
 			});
 		}

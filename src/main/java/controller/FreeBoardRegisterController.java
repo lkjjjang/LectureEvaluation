@@ -47,6 +47,11 @@ public class FreeBoardRegisterController extends HttpServlet{
 			return;
 		}
 		
+		System.out.println("nickName : " + nickName);
+		System.out.println("password : " + password);
+		System.out.println("title : " + title);
+		System.out.println("content : " + content);	
+		
 		BbsDAO bbsDAO = new BbsDAO();
 		BbsDTO bbsDTO = new BbsDTO(0, nickName, password, "NOW()", title, content, 0, 0, 0);
 		int result = bbsDAO.write(bbsDTO);
