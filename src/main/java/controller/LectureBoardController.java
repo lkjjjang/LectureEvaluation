@@ -17,7 +17,7 @@ import user.UserDAO;
 @WebServlet("/lectureBoardController")
 public class LectureBoardController extends HttpServlet{
 		
-	public static int lectureListPrintCount = 5;
+	public static int lectureListPrintCount = 10;
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,7 +36,7 @@ public class LectureBoardController extends HttpServlet{
 			request.setAttribute("userID", userID);
 			request.setAttribute("evaluationList", list);
 			request.setAttribute("listCount", listCount);
-			request.setAttribute("lectureListPrintCount", lectureListPrintCount);
+			request.setAttribute("lectureListPrintCount", LectureBoardController.lectureListPrintCount);
 			request.getRequestDispatcher("lectureBoard.jsp").forward(request, response);
 		}
 	}

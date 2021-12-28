@@ -46,7 +46,7 @@
 						</tr>
 						<tr>
 							<td colspan="2">
-								<input type="hidden" name="userID" value="${userID}">
+								<input type="hidden" id="userID" name="userID" value="${userID}">
 								<input type="submit" value="등록">
 							</td>
 						</tr>						
@@ -85,12 +85,10 @@
 	  			 callbacks: {	//여기 부분이 이미지를 첨부하는 부분
 					onImageUpload : function(files) {
 						console.log('11111111111111');
-						
-						
 						for (var i = 0; i < files.length; i++) {
+							console.log('sendImg : ' + i);
 							uploadSummernoteImageFile(files[i]);
 						}
-						
 					},
 					onPaste: function (e) {
 						var clipboardData = e.originalEvent.clipboardData;
@@ -106,11 +104,12 @@
 	    });
 	    
 	    
-	    
 		function uploadSummernoteImageFile(file) {
-			console.log(file.name);
+			var userID = document.getElementById("userID").value;	
+			console.log(userID);
 			data = new FormData();
 			data.append("file", file);
+			data.append("userID", userID);
 			$.ajax({
 				data : data,
 				type : "post",
@@ -120,7 +119,8 @@
 		        processData: false,
 		        //enctype: "multipart/form-data",
 				success : function(response) {
-					console.log("response")
+					console.log(response);
+					//console.log("response : " + response[0].error);
 	            	//항상 업로드된 파일의 url이 있어야 한다.
 					$('#summernote').summernote('insertImage', response);
 					console.log("bbbbbb")

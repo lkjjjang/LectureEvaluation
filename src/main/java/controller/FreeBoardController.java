@@ -21,7 +21,7 @@ import user.UserDAO;
 @WebServlet("/freeBoardController")
 public class FreeBoardController extends HttpServlet {
 	
-	public static int freeBBSListPrintCount = 10;
+	public static int freeBBSListPrintCount = 20;
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

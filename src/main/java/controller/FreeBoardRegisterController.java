@@ -1,7 +1,14 @@
 package controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +20,8 @@ import evaluation.EvaluationDAO;
 import evaluation.EvaluationDTO;
 import freeBBS.BbsDAO;
 import freeBBS.BbsDTO;
+import reply.ReplyDTO;
+import util.FileUtils;
 
 @WebServlet("/freeBoardRegisterController")
 public class FreeBoardRegisterController extends HttpServlet{
@@ -24,6 +33,11 @@ public class FreeBoardRegisterController extends HttpServlet{
 		String password = null;
 		String title = null;
 		String content = null;
+		String userID = null;
+		
+		if (request.getSession().getAttribute("userID") != null) {
+			userID = (String) request.getSession().getAttribute("userID");
+		}
 		
 		if (request.getParameter("nickName") != null) {
 			nickName = request.getParameter("nickName");
@@ -47,10 +61,46 @@ public class FreeBoardRegisterController extends HttpServlet{
 			return;
 		}
 		
-		System.out.println("nickName : " + nickName);
-		System.out.println("password : " + password);
-		System.out.println("title : " + title);
-		System.out.println("content : " + content);	
+		String[] contentSplit = content.split(" ");			
+		String directory = this.getServletContext().getRealPath("/upload/") + getTodayDate();
+		String tempDir = this.getServletContext().getRealPath("/tempImg/") + userID;
+		
+		File folder = new File(directory);				
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+		
+		FileUtils fileUtils = new FileUtils();
+		ArrayList<String> usedFileList = fileUtils.getUsedFileList(contentSplit);
+		
+		ArrayList<FileInputStream> inputStreams = new ArrayList<FileInputStream>();
+		for (String flist: usedFileList) {
+			String path = tempDir + File.separator + flist;
+			FileInputStream file = new FileInputStream(path);
+			inputStreams.add(file);
+		}
+		
+		ArrayList<FileOutputStream> outputStreams = new ArrayList<FileOutputStream>();
+		for (String flist: usedFileList) {
+			String path = directory + File.separator + flist;
+			FileOutputStream file = new FileOutputStream(path);
+			outputStreams.add(file);
+		}
+		
+		int index = 0;
+		for (FileInputStream fis: inputStreams) {
+			byte[] buf = new byte[1024];
+			int size = 0;
+			while((size = fis.read(buf)) != -1 ) {
+				outputStreams.get(index).write(buf, 0, size);
+			}
+			outputStreams.get(index).flush();
+			outputStreams.get(index).close();
+			fis.close();
+			index++;
+		}
+		
+		fileUtils.deleteFolder(tempDir);
 		
 		BbsDAO bbsDAO = new BbsDAO();
 		BbsDTO bbsDTO = new BbsDTO(0, nickName, password, "NOW()", title, content, 0, 0, 0);
@@ -61,6 +111,12 @@ public class FreeBoardRegisterController extends HttpServlet{
 			//정상적으로 등록 되었습니다.
 			pageBack(response, "정상적으로 등록 되었습니다.", backURL);
 		}
+	}
+	
+	private String getTodayDate() {
+		Date nowTime = new Date();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		return sf.format(nowTime).toString();
 	}
 	
 	private boolean isWhiteSpace(String param) {
