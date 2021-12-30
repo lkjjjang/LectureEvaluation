@@ -84,9 +84,7 @@
 	  			 fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
 	  			 callbacks: {	//여기 부분이 이미지를 첨부하는 부분
 					onImageUpload : function(files) {
-						console.log('11111111111111');
 						for (var i = 0; i < files.length; i++) {
-							console.log('sendImg : ' + i);
 							uploadSummernoteImageFile(files[i]);
 						}
 					},
@@ -103,7 +101,6 @@
 	    	});
 	    });
 	    
-	    
 		function uploadSummernoteImageFile(file) {
 			var userID = document.getElementById("userID").value;	
 			console.log(userID);
@@ -115,22 +112,25 @@
 				type : "post",
 				url : "uploadSummernoteImageFile",
 				cache: false,
-		        contentType: false,
+		        contentType: false, // contentType 보내는 데이터의 유형 (false 설정시 기본유형으로됨)
 		        processData: false,
+		        //dataType: "json", // 서버에서 보내주는 데이터를 받는 유형 (서버에서 설정한 유형과 같아야한다)
 		        //enctype: "multipart/form-data",
+		        // success함수는 기본적으로 3개의 인자를 받지만 응답코드 하나만 인자로 사용해도 무방
 				success : function(response) {
-					console.log(response);
-					//console.log("response : " + response[0].error);
-	            	//항상 업로드된 파일의 url이 있어야 한다.
-					$('#summernote').summernote('insertImage', response);
-					console.log("bbbbbb")
-				}
+					if (response[0].resultCode == 'capacityFull') {
+						console.log(response[1].msg);
+						alert(response[1].msg)
+					} else {
+						$('#summernote').summernote('insertImage', response);
+					}
+					
+				},
+				error : function(error) {
+			        alert('시스템 오류');
+			    }
 			});
 		}
 	</script>
-    
-	
-	
-	
 </body>
 </html>

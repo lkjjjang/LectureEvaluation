@@ -39,6 +39,10 @@ public class FreeBoardRegisterController extends HttpServlet{
 			userID = (String) request.getSession().getAttribute("userID");
 		}
 		
+		if (userID == null) {
+			pageBack(response, "로그인후 사용 가능합니다.");
+		}
+		
 		if (request.getParameter("nickName") != null) {
 			nickName = request.getParameter("nickName");
 		}
@@ -71,36 +75,12 @@ public class FreeBoardRegisterController extends HttpServlet{
 		}
 		
 		FileUtils fileUtils = new FileUtils();
-		ArrayList<String> usedFileList = fileUtils.getUsedFileList(contentSplit);
-		
-		ArrayList<FileInputStream> inputStreams = new ArrayList<FileInputStream>();
-		for (String flist: usedFileList) {
-			String path = tempDir + File.separator + flist;
-			FileInputStream file = new FileInputStream(path);
-			inputStreams.add(file);
-		}
-		
-		ArrayList<FileOutputStream> outputStreams = new ArrayList<FileOutputStream>();
-		for (String flist: usedFileList) {
-			String path = directory + File.separator + flist;
-			FileOutputStream file = new FileOutputStream(path);
-			outputStreams.add(file);
-		}
-		
-		int index = 0;
-		for (FileInputStream fis: inputStreams) {
-			byte[] buf = new byte[1024];
-			int size = 0;
-			while((size = fis.read(buf)) != -1 ) {
-				outputStreams.get(index).write(buf, 0, size);
-			}
-			outputStreams.get(index).flush();
-			outputStreams.get(index).close();
-			fis.close();
-			index++;
-		}
-		
-		fileUtils.deleteFolder(tempDir);
+		// 본문에서 사용된 파일 리스트
+		ArrayList<String> usedFileList = fileUtils.getUsedFileList(contentSplit);	
+		// 파일이동후 이동한 파일 리스트
+		ArrayList<String> reNameList = fileUtils.moveFile(directory, tempDir, usedFileList);	
+		// 임시폴더로 되어 있는 이미지 경로를 본 경로로 바꿔줌
+		content = fileUtils.getModifyedContent(contentSplit, usedFileList, reNameList);
 		
 		BbsDAO bbsDAO = new BbsDAO();
 		BbsDTO bbsDTO = new BbsDTO(0, nickName, password, "NOW()", title, content, 0, 0, 0);
@@ -148,4 +128,32 @@ public class FreeBoardRegisterController extends HttpServlet{
 		script.println("</script>");
 		script.close();
 	}
+	/*
+	ArrayList<FileInputStream> inputStreams = new ArrayList<FileInputStream>();
+	for (String flist: usedFileList) {
+		String path = tempDir + File.separator + flist;
+		FileInputStream file = new FileInputStream(path);
+		inputStreams.add(file);
+	}
+	
+	ArrayList<FileOutputStream> outputStreams = new ArrayList<FileOutputStream>();
+	for (String flist: usedFileList) {
+		String path = directory + File.separator + flist;
+		FileOutputStream file = new FileOutputStream(path);
+		outputStreams.add(file);
+	}
+	
+	int index = 0;
+	for (FileInputStream fis: inputStreams) {
+		byte[] buf = new byte[1024];
+		int size = 0;
+		while((size = fis.read(buf)) != -1 ) {
+			outputStreams.get(index).write(buf, 0, size);
+		}
+		outputStreams.get(index).flush();
+		outputStreams.get(index).close();
+		fis.close();
+		index++;
+	}
+	*/
 }
