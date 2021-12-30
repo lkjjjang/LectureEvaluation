@@ -51,7 +51,6 @@
 		<h1>
     		<a class="ed link-primary text-bold title-underline" href="freeBoardController?pageNumber=1">자유게시판</a>
   		</h1>	
-  		<form method="post" action="freeBoardDeleteController">
 			<table class="table table-hover">
 				<colgroup>
 					<col width="10%"/>
@@ -92,13 +91,12 @@
 			</table>	
 			<c:if test="${userID == 'admin'}">
 				<div style="text-align: right;">
-					<input type="submit" class="btn btn-danger" value="선택삭제">
 					<a href="write.jsp" class="btn btn-primary">글쓰기</a>
 				</div>	
 			</c:if>
-		</form>	
 		<div id="checkList">
 			<button class="btn btn-primary" id="selectAll" onclick="select(this)">전체선택</button>
+			<button class="btn btn-danger" id="deleteAll" onclick="deleteAll()">선택삭제</button>
 		</div>
 		<c:if test="${userID != 'admin'}">
 			<div style="text-align: right;">
@@ -147,9 +145,9 @@
 	<footer class="bg-dark mt-4 p-5 text-center" style="color: #FFFFFF;">
 		Copyright &copy; 2021이기주All Rights Reserved.
 	</footer>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" 
-			integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" 
-			crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.6.0.js"
+  			integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  			crossorigin="anonymous">
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
 			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" 
@@ -159,7 +157,53 @@
 			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
 			crossorigin="anonymous">
 	</script>
-	
+	<script type="text/javascript">
+		function deleteAll() {
+			var checkList = document.getElementsByName('delCheck_id');
+			var checkedList = new Array();
+			var count = 0;
+			for (var i = 0; i < checkList.length; i++) {
+				if (checkList[i].checked == true) {
+					count++;
+					checkedList[i] = checkList[i].value;
+				}
+			}
+			
+			if (count == 0) {
+				alert('선택사항이 없습니다.');
+				return;
+			}
+			
+			var data = new Array();
+			for (var i = 0; i < checkedList.length; i++) {
+				if (checkedList[i] != null) {
+					var dataTemp = new Object();
+					dataTemp.id = checkedList[i];
+					data.push(dataTemp);
+				}
+			}
+			
+			$.ajax({
+				type: "post",
+				url: "freeBoardDeleteController",
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				
+				success: function(json) {
+					if (json[0].resultCode == 'ok') {
+						alert('삭제 되었습니다.');
+					} else {
+						alert('데이터베이스 오류 입니다.');
+					}
+					location.reload();
+				},
+				error: function(json) {
+					alert('시스템 오류 입니다.')
+				}
+			});
+		}
+	</script>
 	<script type="text/javascript">
 		function select(tagID) {
 			var id = tagID.id;
@@ -173,15 +217,16 @@
 			}
 			
 			if (id == 'selectAll') {
-				changeId('cancel');
+				changeId('cancel', '선택해제');
 			} else {
-				changeId('selectAll');
+				changeId('selectAll', '전체선택');
 			}
 		}
 		
-		function changeId(id)  {
+		function changeId(id, text)  {
 			  const btnElement = document.getElementById('checkList');
-			  btnElement.innerHTML = '<button class="btn btn-primary" id="' + id + '" onclick="select(this)">선택해제</button>';
+			  btnElement.innerHTML = '<button class="btn btn-primary" id="' + id + '" onclick="select(this)">'+ text +'</button>' +
+			  							'<button class="btn btn-danger" id="deleteAll" onclick="deleteAll()">선택삭제</button>';
 		}
 	</script>
 </body>

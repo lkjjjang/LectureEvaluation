@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,12 +30,16 @@ public class FreeBoardDeleteController extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String userID = (String) request.getSession().getAttribute("userID");
-
 		if (userID == null) {
 			pageBack(response, "로그인후 사용 가능합니다.");
-		} else if (userID.equals("admin")) {
-			deleteAll(request.getParameterValues("delCheck_id"));
-			response.sendRedirect("/hycu/freeBoardController?pageNumber=1");
+		} 
+		
+		if (userID.equals("admin")) {
+			BufferedReader br = request.getReader();
+			String requestData = br.readLine();
+			deleteAll(requestData);
+			String resultJson = getJson("ok");
+			response.getWriter().write(resultJson);
 		} else {
 			BufferedReader br = request.getReader();
 			String requestData = br.readLine();
@@ -49,7 +54,7 @@ public class FreeBoardDeleteController extends HttpServlet{
 
 			String resultCode = null;
 			if (bbsPassword.equals(inputPassword)) {
-				// 게시글, 댓글, 대댓글, 추천 삭제
+				// 게시글, 댓글, 대댓글, 추천, 파일 삭제
 				if (isDeleteAll(bbsID)) {
 					resultCode = "OK";
 				} else {
@@ -60,23 +65,25 @@ public class FreeBoardDeleteController extends HttpServlet{
 			}
 				
 			String resultJson = getJson(resultCode);
-			System.out.println("aaaaaaaaa : " + resultJson);
 			response.getWriter().write(resultJson);
 		}
 	}
 	
-	private void deleteAll(String[] delIDs) {
+	private void deleteAll(String jsonStr) {
+		System.out.println(jsonStr);
+		String[] idList = jsonStr.replace(":", "").replace("i", "").replace("d", "").replace("\"", "").replace("{", "").replace("}", "").replace("[", "").replace("]", "").split(",");
+
 		BbsDAO bbsDAO = new BbsDAO();
 		CommentDAO commentDAO = new CommentDAO();
 		ReplyDAO replyDAO = new ReplyDAO();
 		FileDAO fileDAO = new FileDAO();
 		VoteDAO voteDAO = new VoteDAO();
 		
-		bbsDAO.deleteAll(delIDs);
-		commentDAO.deleteAll(delIDs);
-		replyDAO.deleteAll(delIDs);
-		fileDAO.deleteAll(delIDs);
-		voteDAO.deleteAll(delIDs);
+		bbsDAO.deleteAll(idList);
+		commentDAO.deleteAll(idList);
+		replyDAO.deleteAll(idList);
+		fileDAO.deleteAll(idList);
+		voteDAO.deleteAll(idList);
 	}
 	
 	private void pageBack(HttpServletResponse response, String alertMsg) throws IOException {
@@ -93,13 +100,14 @@ public class FreeBoardDeleteController extends HttpServlet{
 		CommentDAO commmentDAO = new CommentDAO();
 		ReplyDAO replyDAO = new ReplyDAO();
 		VoteDAO voteDAO = new VoteDAO();
+		FileDAO fileDAO = new FileDAO();
 		
 		int bbs = BbsDAO.delete(bbsID);
 		int comment = commmentDAO.deleteAll(bbsID);
 		int reply = replyDAO.deleteAll(bbsID);
 		int vote = voteDAO.delete(bbsID);
-		
-		if (bbs == -1 || comment == -1 || reply == -1 || vote == -1) {
+		int file = fileDAO.delete(bbsID);
+		if (bbs == -1 || comment == -1 || reply == -1 || vote == -1 || file == -1) {
 			return false;
 		}
 		return true;

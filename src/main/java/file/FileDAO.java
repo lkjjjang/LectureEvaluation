@@ -7,6 +7,27 @@ import java.sql.ResultSet;
 import util.DatabaseUtil;
 
 public class FileDAO {
+	public int delete(String bbsID) {
+		String SQL = "DELETE FROM FREE_BBS_FILE WHERE bbsID = ?";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, bbsID);
+			// executeUpdate 실행성공시 업데이트한 갯수를 반환
+			// 이상황에선 1개만 추가 하기 때문에 1을 반환
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			instanseClose(conn, pstmt, rs);
+		}
+		return -1; // 추천중복오류
+	}
+	
 	public int deleteAll(String[] bbsID) {
 		String param = "";
 		for(int i = 0; i < bbsID.length; i++) {
