@@ -37,7 +37,8 @@ public class BbsDAO {
 						rs.getString(6).replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("<br>", "\r\n"),
 						rs.getInt(7),
 						rs.getInt(8),
-						rs.getInt(9)
+						rs.getInt(9),
+						rs.getInt(10)
 						);
 			}
 		} catch (Exception e) {
@@ -47,6 +48,25 @@ public class BbsDAO {
 		}
 		
 		return result;
+	}
+	
+	public int updateUseImage(int bbsID) {
+		String SQL = "UPDATE FREE_BBS SET useImage = 1 WHERE bbsID = ?";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			instanseClose(conn, pstmt, rs);
+		}
+		return -1; // 데이터베이스 오류
 	}
 	
 	public int hitUpdate(int bbsID) {
@@ -92,7 +112,7 @@ public class BbsDAO {
 	
 	
 	public int write(BbsDTO bbsDTO) {
-		String SQL = "INSERT INTO FREE_BBS VALUES (NULL, ?, ?, NOW(), ?, ?, 0, 0, 0)";
+		String SQL = "INSERT INTO FREE_BBS VALUES (NULL, ?, ?, NOW(), ?, ?, 0, 0, 0, 0)";
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -114,6 +134,35 @@ public class BbsDAO {
 		return -1; // 데이터베이스 오류
 	}
 	
+	public int getBbsID(BbsDTO bbsDTO) {	
+		String SQL = "";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int result = 0;
+		
+		try {		
+			SQL = "SELECT bbsID FROM FREE_BBS WHERE nickName = ? AND password = ? AND bbsTitle = ? ORDER BY bbsID DESC LIMIT 1";
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, bbsDTO.getNickName());
+			pstmt.setString(2, bbsDTO.getPassword());
+			pstmt.setString(3, bbsDTO.getBbsTitle());
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				result = rs.getInt(1);
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			instanseClose(conn, pstmt, rs);
+		}
+		
+		return -1;
+	}
+	
 	public ArrayList<BbsDTO> getList(int pageNumber) {		
 		ArrayList<BbsDTO> list = new ArrayList<>();
 		String SQL = "";
@@ -126,7 +175,6 @@ public class BbsDAO {
 		
 		try {		
 			SQL = "SELECT * FROM FREE_BBS ORDER BY bbsID DESC LIMIT " + minColNum + ", " + colCount;
-			// SELECT ((SELECT COUNT(*) FROM FREE_BBS_COMMENT) + (SELECT COUNT(*) FROM FREE_BBS_REPLY));
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
@@ -141,7 +189,8 @@ public class BbsDAO {
 						rs.getString(6),
 						rs.getInt(7),
 						rs.getInt(8),
-						rs.getInt(9)
+						rs.getInt(9),
+						rs.getInt(10)
 						);
 				list.add(bbs);
 			}
@@ -266,6 +315,31 @@ public class BbsDAO {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, Integer.parseInt(bbsID));
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			instanseClose(conn, pstmt, rs);
+		}
+		return -1; //데이터베이스 오류
+	}
+	
+	public int deleteAll(String[] bbsID) {
+		String param = "";
+		for(int i = 0; i < bbsID.length; i++) {
+			param += bbsID[i];
+			if (i < bbsID.length - 1) {
+				param += ",";
+			}
+		}
+		
+		String SQL = "DELETE FROM FREE_BBS WHERE bbsID IN (" + param + ")";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();

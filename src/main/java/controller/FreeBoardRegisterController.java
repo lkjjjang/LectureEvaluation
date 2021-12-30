@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import evaluation.EvaluationDAO;
 import evaluation.EvaluationDTO;
+import file.FileDAO;
+import file.FileDTO;
 import freeBBS.BbsDAO;
 import freeBBS.BbsDTO;
 import reply.ReplyDTO;
@@ -79,13 +81,30 @@ public class FreeBoardRegisterController extends HttpServlet{
 		ArrayList<String> usedFileList = fileUtils.getUsedFileList(contentSplit);	
 		// 파일이동후 이동한 파일 리스트
 		ArrayList<String> reNameList = fileUtils.moveFile(directory, tempDir, usedFileList);	
-		// 임시폴더로 되어 있는 이미지 경로를 본 경로로 바꿔줌
+		// 임시폴더로 되어 있는 이미지 경로를 정식 경로로 바꿔줌
 		content = fileUtils.getModifyedContent(contentSplit, usedFileList, reNameList);
 		
 		BbsDAO bbsDAO = new BbsDAO();
-		BbsDTO bbsDTO = new BbsDTO(0, nickName, password, "NOW()", title, content, 0, 0, 0);
+		BbsDTO bbsDTO = new BbsDTO(0, nickName, password, "NOW()", title, content, 0, 0, 0, 0);
 		int result = bbsDAO.write(bbsDTO);
-		if (result == -1) {
+		int imageUpdateResult = 0;
+		int useImageUpdateResult = 0;
+		
+		// 이미지정보 추가
+		FileDAO fileDAO = new FileDAO();	
+		if (usedFileList.size() != 0 && reNameList.size() != 0) {
+			int bbsID = bbsDAO.getBbsID(bbsDTO);
+			useImageUpdateResult = bbsDAO.updateUseImage(bbsID);
+			
+			for (int i = 0; i < usedFileList.size(); i++) {
+				int fileID = fileDAO.getFileID(userID, usedFileList.get(i));
+				FileDTO fileDTO = new FileDTO(fileID, bbsID, usedFileList.get(i), reNameList.get(i));
+				imageUpdateResult = fileDAO.updateFileName(fileDTO);
+			}
+		}
+		
+		if (result == -1 || imageUpdateResult == -1 || useImageUpdateResult == -1) {
+			bbsDAO.delete(bbsDTO.getBbsID() + "");			
 			pageBack(response, "작성한 글 등록에 실패 했습니다.");
 		} else {
 			//정상적으로 등록 되었습니다.
@@ -128,32 +147,4 @@ public class FreeBoardRegisterController extends HttpServlet{
 		script.println("</script>");
 		script.close();
 	}
-	/*
-	ArrayList<FileInputStream> inputStreams = new ArrayList<FileInputStream>();
-	for (String flist: usedFileList) {
-		String path = tempDir + File.separator + flist;
-		FileInputStream file = new FileInputStream(path);
-		inputStreams.add(file);
-	}
-	
-	ArrayList<FileOutputStream> outputStreams = new ArrayList<FileOutputStream>();
-	for (String flist: usedFileList) {
-		String path = directory + File.separator + flist;
-		FileOutputStream file = new FileOutputStream(path);
-		outputStreams.add(file);
-	}
-	
-	int index = 0;
-	for (FileInputStream fis: inputStreams) {
-		byte[] buf = new byte[1024];
-		int size = 0;
-		while((size = fis.read(buf)) != -1 ) {
-			outputStreams.get(index).write(buf, 0, size);
-		}
-		outputStreams.get(index).flush();
-		outputStreams.get(index).close();
-		fis.close();
-		index++;
-	}
-	*/
 }

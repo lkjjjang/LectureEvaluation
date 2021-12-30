@@ -50,42 +50,64 @@
 	<div class="container">
 		<h1>
     		<a class="ed link-primary text-bold title-underline" href="freeBoardController?pageNumber=1">자유게시판</a>
-  		</h1>		
-		<table class="table table-hover">
-			<colgroup>
-				<col width="10%"/>
-				<col width="50%"/>
-				<col width="15%"/>
-				<col width="10%"/>
-				<col width="15%"/>
-			</colgroup>
-			<thead style="text-align: center;">			
-				<tr>
-					<th>번호</th>
-					<th>제목</th>
-					<th>작성자</th>
-					<th>조회수</th>
-					<th>작성일</th>					
-				</tr>				
-			</thead>
-			<tbody>
-				<c:forEach var="freeBBS" items="${freeBBS}" begin="0" end="${freeBBSListPrintCount}">
+  		</h1>	
+  		<form method="post" action="freeBoardDeleteController">
+			<table class="table table-hover">
+				<colgroup>
+					<col width="10%"/>
+					<col width="50%"/>
+					<col width="15%"/>
+					<col width="10%"/>
+					<col width="15%"/>
+				</colgroup>
+				<thead style="text-align: center;">			
 					<tr>
-						<td style="text-align: center;">${freeBBS.bbsID}</td>
-						<td>
-							<a href="freeBoardDetailController?id=${freeBBS.bbsID}">${freeBBS.bbsTitle}</a>
-							<c:if test="${freeBBS.commentCount != 0}">[${freeBBS.commentCount}]</c:if>							
-						</td>
-						<td style="text-align: center;">${freeBBS.nickName}</td>
-						<td style="text-align: center;">${freeBBS.bbsHit}</td>
-						<td style="text-align: center;">${freeBBS.bbsDate}</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>	
-		<div style="text-align: right;">
-			<a href="write.jsp" class="btn btn-primary">글쓰기</a>
-		</div>	
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성자</th>
+						<th>조회수</th>
+						<th>작성일</th>					
+					</tr>				
+				</thead>
+				<tbody>
+					<c:forEach var="freeBBS" items="${freeBBS}" begin="0" end="${freeBBSListPrintCount}">
+						<tr>
+							<td style="text-align: center;">
+								<c:if test="${userID == 'admin'}">
+									<input type="checkbox" name="delCheck_id" id="delCheck_id" value="${freeBBS.bbsID}">
+								</c:if>
+								${freeBBS.bbsID} 
+							</td>
+							<td>
+								<a href="freeBoardDetailController?id=${freeBBS.bbsID}">${freeBBS.bbsTitle}</a>
+								<c:if test="${freeBBS.commentCount != 0}">[${freeBBS.commentCount}]</c:if>	
+								<c:if test="${freeBBS.useImage == 1}"><img src="images/imageIcon.png"></c:if>						
+							</td>
+							<td style="text-align: center;">${freeBBS.nickName}</td>
+							<td style="text-align: center;">${freeBBS.bbsHit}</td>
+							<td style="text-align: center;">${freeBBS.bbsDate}</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>	
+			<c:if test="${userID == 'admin'}">
+				<div style="text-align: right;">
+					<input type="submit" class="btn btn-danger" value="선택삭제">
+					<a href="write.jsp" class="btn btn-primary">글쓰기</a>
+				</div>	
+			</c:if>
+		</form>	
+		<div id="checkList">
+			<button class="btn btn-primary" id="selectAll" onclick="select(this)">전체선택</button>
+		</div>
+		<c:if test="${userID != 'admin'}">
+			<div style="text-align: right;">
+				<a href="write.jsp" class="btn btn-primary">글쓰기</a>
+			</div>	
+		</c:if>
+		
+		
+		
 		<!-- 페이지번호 출력 -->
 		<!-- 파라미터로 들어오는 페이지 번호를 이용해 startNum값을 구함 -->
 		<div>
@@ -136,6 +158,31 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" 
 			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
 			crossorigin="anonymous">
+	</script>
+	
+	<script type="text/javascript">
+		function select(tagID) {
+			var id = tagID.id;
+			var checkList = document.getElementsByName('delCheck_id');
+			for (var i = 0; i < checkList.length; i++) {
+				if (id == 'selectAll') {
+					checkList[i].checked = true;
+				} else {
+					checkList[i].checked = false;
+				}
+			}
+			
+			if (id == 'selectAll') {
+				changeId('cancel');
+			} else {
+				changeId('selectAll');
+			}
+		}
+		
+		function changeId(id)  {
+			  const btnElement = document.getElementById('checkList');
+			  btnElement.innerHTML = '<button class="btn btn-primary" id="' + id + '" onclick="select(this)">선택해제</button>';
+		}
 	</script>
 </body>
 </html>

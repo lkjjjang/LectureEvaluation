@@ -11,11 +11,12 @@ public class BbsDTO {
 	private int bbsHit;
 	private int bbsUpvote;
 	private int commentCount;
+	private int useImage;
 	
 	public BbsDTO() {}
 	
 	public BbsDTO(int bbsID, String nickName, String password, String bbsDate, String bbsTitle, String bbsContente,
-			int bbsHit, int bbsUpvote, int commentCount) {
+			int bbsHit, int bbsUpvote, int commentCount, int useImage) {
 		super();
 		this.bbsID = bbsID;
 		this.nickName = nickName;
@@ -26,6 +27,14 @@ public class BbsDTO {
 		this.bbsHit = bbsHit;
 		this.bbsUpvote = bbsUpvote;
 		this.commentCount = commentCount;
+		this.useImage = useImage;
+	}
+	
+	public int getUseImage() {
+		return useImage;
+	}
+	public void setUseImage(int useImage) {
+		this.useImage = useImage;
 	}
 	public int getCommentCount() {
 		return commentCount;

@@ -44,7 +44,7 @@ public class FreeBoardController extends HttpServlet {
 			
 			// 페이징처리를 위해 게시글 갯수 파악
 			int listCount = getListCount(request);			
-						
+			
 			request.setAttribute("freeBBS", bbsList);
 			request.setAttribute("listCount", listCount);
 			request.setAttribute("pageNumber", pageNumber);

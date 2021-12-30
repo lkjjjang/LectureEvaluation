@@ -5,15 +5,36 @@ public class FileDTO {
 	private int bbsID;
 	private String userID;
 	private String fileRealName;
-	private String fileNewName;
+	private String fileTempName;
+	private String fileLastName;
+	
+	public FileDTO(String userID, String fileRealName, String fileTempName) {
+		this.userID = userID;
+		this.fileRealName = fileRealName;
+		this.fileTempName = fileTempName;
+	}
 
-	public FileDTO(int fileID, int bbsID, String userID, String fileRealName, String fileNewName) {
+	public FileDTO(int fileID, int bbsID, String fileTempName, String fileLastName) {
+		this.fileID = fileID;
+		this.bbsID = bbsID;
+		this.fileTempName = fileTempName;
+		this.fileLastName = fileLastName;
+	}
+
+	public FileDTO(int fileID, int bbsID, String userID, String fileRealName, String fileTempName) {
 		super();
 		this.fileID = fileID;
 		this.bbsID = bbsID;
 		this.userID = userID;
 		this.fileRealName = fileRealName;
-		this.fileNewName = fileNewName;
+		this.fileTempName = fileTempName;
+	}
+	
+	public String getFileLastName() {
+		return fileLastName;
+	}
+	public void setFileLastName(String fileLastName) {
+		this.fileLastName = fileLastName;
 	}
 	public int getBbsID() {
 		return bbsID;
@@ -39,16 +60,16 @@ public class FileDTO {
 	public void setFileRealName(String fileRealName) {
 		this.fileRealName = fileRealName;
 	}
-	public String getFileNewName() {
-		return fileNewName;
+	public String getFileTempName() {
+		return fileTempName;
 	}
-	public void setFileNewName(String fileNewName) {
-		this.fileNewName = fileNewName;
+	public void setFileTempName(String fileTempName) {
+		this.fileTempName = fileTempName;
 	}
 	@Override
 	public String toString() {
 		return "FileDTO [fileID=" + fileID + ", bbsID=" + bbsID + ", userID=" + userID + ", fileRealName="
-				+ fileRealName + ", fileNewName=" + fileNewName + "]";
+				+ fileRealName + ", fileTempName=" + fileTempName + "]";
 	}
 	
 }
