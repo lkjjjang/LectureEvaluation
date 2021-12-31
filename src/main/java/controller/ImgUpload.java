@@ -67,7 +67,6 @@ public class ImgUpload extends HttpServlet{
 
 		directory = fileUtils.getDirectory();
 		String newfileName = fileUtils.getFileName();
-
 		// 경로설정시 경로구분자 사용, 최종 경로임
 		String filePath = directory + File.separator + newfileName;
 		// 출력스트림을 이용 파일을 원하는 경로에 붙여넣음
@@ -94,7 +93,8 @@ public class ImgUpload extends HttpServlet{
 		// url을 json으로 보내면 ajax에서 아예 먹통됨 오류로 인식못함 아무런 응답이 없음
 		// 이미지링크를 ajax에 보내고 싶을땐 서버단에서 ContentType 지정하지 않고 기본 type으로 url만 보내줌 (이렇게 해야 img태크를 자동으로 붙여줌)
 		// 제작자가 원하는 성공이 아닌 다른 대체 응답을 보내고 싶을땐 ContentType 을 json으로 지정후 상황에 맞춰 보내줌
-		String url = "/hycu/tempImg/" + userID + File.separator + newfileName;
+		// 컨텍스트명을 / 로 변경했기때문에 hycu(컨텍스트명)는 url에서 제거함
+		String url = "/tempImg/" + userID + File.separator + newfileName;
 		response.getWriter().write(url);
 	}
 	

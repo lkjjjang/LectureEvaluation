@@ -33,10 +33,6 @@ public class LoginController extends HttpServlet {
 			pageBack(request, response, "입력 안 된 사항이 있습니다.");
 		}
 		
-		if (!userDAO.getUserEmailChecked(userID)) {
-			pageBack(request, response, "이메일 인증후 사용 가능합니다.");
-		}
-		
 		// 실제 로그인구현부분 
 		// db에 아이디, 비번이 일치하면 세션에 userID를 저장시켜 
 		// 모든페이지에서 세션값이 있으면 로그인된 상태로 간주
@@ -44,6 +40,10 @@ public class LoginController extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		if (result == 1) {
+			if (!userDAO.getUserEmailChecked(userID)) {
+				pageBack(request, response, "이메일 인증후 사용 가능합니다.");
+			}
+			
 			session.setAttribute("userID", userID);
 			response.sendRedirect("lectureBoardController");
 		} else if (result == 0){

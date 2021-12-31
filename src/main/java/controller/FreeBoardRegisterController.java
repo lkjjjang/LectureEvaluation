@@ -70,19 +70,21 @@ public class FreeBoardRegisterController extends HttpServlet{
 		String[] contentSplit = content.split(" ");			
 		String directory = this.getServletContext().getRealPath("/upload/") + getTodayDate();
 		String tempDir = this.getServletContext().getRealPath("/tempImg/") + userID;
-		
 		File folder = new File(directory);				
+		
 		if (!folder.exists()) {
 			folder.mkdir();
 		}
 		
 		FileUtils fileUtils = new FileUtils();
 		// 본문에서 사용된 파일 리스트
-		ArrayList<String> usedFileList = fileUtils.getUsedFileList(contentSplit);	
+		ArrayList<String> usedFileList = fileUtils.getUsedFileList(contentSplit, userID);	
 		// 파일이동후 이동한 파일 리스트
 		ArrayList<String> reNameList = fileUtils.moveFile(directory, tempDir, usedFileList);	
 		// 임시폴더로 되어 있는 이미지 경로를 정식 경로로 바꿔줌
-		content = fileUtils.getModifyedContent(contentSplit, usedFileList, reNameList);
+		if (usedFileList.size() != 0 && reNameList.size() != 0) {
+			content = fileUtils.getModifyedContent(contentSplit, usedFileList, reNameList, userID);
+		}
 		
 		BbsDAO bbsDAO = new BbsDAO();
 		BbsDTO bbsDTO = new BbsDTO(0, nickName, password, "NOW()", title, content, 0, 0, 0, 0);

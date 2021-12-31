@@ -38,7 +38,7 @@ public class EmailSendController extends HttpServlet {
 			script.close();
 		}
 		
-		String host = "http://localhost:8080/smart/";
+		String host = "http://localhost:8080/hycu/";
 		String from = "lkjjjang1985@gmail.com";
 		String to = userDAO.getUserEmail(userID);
 		String subject = "강의평가를 위한 이메일 인증 메일입니다.";

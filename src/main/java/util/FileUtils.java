@@ -10,8 +10,7 @@ import java.util.Date;
 public class FileUtils {
 	private String directory;
 	private String fileName;
-	private String root = "src=\"/hycu/tempImg/"; // 생성자로 userID 붙여서 경로 완성
-	//private String rootPath;
+	private final String root = "src=\"/tempImg/";
 	
 	public FileUtils() {		
 	}
@@ -32,29 +31,26 @@ public class FileUtils {
 		this.fileName = fileName;
 	}
 	
-	public String getModifyedContent(String[] content, ArrayList<String> oriFile, ArrayList<String> reName) {
-		int index = 0;
-		int length = oriFile.size();
+	public String getModifyedContent(String[] content, ArrayList<String> oriFile, ArrayList<String> reName, String userID) {
+		String rootPath = this.root + userID;
+		int rootLength = rootPath.length();
+		int fileIndex = 0;
+		
 		for (int i = 0; i < content.length; i++) {
-			if (index == length) {
-				break;
-			}
-			
-			if (content[i].length() < 20) {
+			if (content[i].length() < rootLength) {
 				continue;
 			}
 			
-			String src = content[i].substring(0, 11);
-			if (!src.equals("src=\"/hycu/")) {
+			String src = content[i].substring(0, rootLength);
+			if (!src.equals(rootPath)) {
 				continue;
 			}
-			
+			// 이걸 쪼갬 src="/tempImg/1111\KakaoTalk_20210423_000414767.jpg"
 			int start = content[i].lastIndexOf(File.separator) + 1;		
 			int end = content[i].length() - 1;
-			String ori = oriFile.get(index);
+			String ori = oriFile.get(fileIndex);
 			if (ori.equals(content[i].substring(start, end))) {
-				content[i] = src + "upload/" + getTodayDate() + File.separator + reName.get(index) + "\"";
-				index++;
+				content[i] = "src=\"/upload/" + getTodayDate() + File.separator + reName.get(fileIndex++) + "\"";
 			}
 		}
 		
@@ -128,22 +124,22 @@ public class FileUtils {
 	}
 	
 
-	public ArrayList<String> getUsedFileList(String[] content) {
+	public ArrayList<String> getUsedFileList(String[] content, String userID) {
 		ArrayList<String> result = new ArrayList<String>();		
 		String fileName = "";
 		
 		for (int i = 0; i < content.length; i++) {
-			int tagPathLength = 19;
+			int tagPathLength = this.root.length() + userID.length();
 			if (content[i].length() < tagPathLength) {
 				continue;
 			}
 			
 			String rootName = content[i].substring(0, tagPathLength);
-			if (!this.root.equals(rootName)) {
+			if (!(this.root + userID).equals(rootName)) {
 				continue;
 			}
 			
-			// src="/hycu/tempImg/1111\KakaoTalk_20210423_000414767(1).jpg"></p><p>&nbsp;
+			// src="/tempImg/1111\KakaoTalk_20210423_000414767(1).jpg"></p><p>&nbsp;
 			// 이 형태를 쪼갠후 파일명 추출
 			int separator = content[i].lastIndexOf(File.separator);			
 			String[] tempName = content[i].substring(separator + 1, content[i].length() - 1).split("\"");

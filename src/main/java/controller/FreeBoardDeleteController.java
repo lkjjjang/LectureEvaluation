@@ -37,7 +37,9 @@ public class FreeBoardDeleteController extends HttpServlet{
 		if (userID.equals("admin")) {
 			BufferedReader br = request.getReader();
 			String requestData = br.readLine();
+			
 			deleteAll(requestData);
+			
 			String resultJson = getJson("ok");
 			response.getWriter().write(resultJson);
 		} else {

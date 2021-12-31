@@ -89,15 +89,12 @@
 					</c:forEach>
 				</tbody>
 			</table>	
-			<c:if test="${userID == 'admin'}">
-				<div style="text-align: right;">
-					<a href="write.jsp" class="btn btn-primary">글쓰기</a>
-				</div>	
-			</c:if>
-		<div id="checkList">
-			<button class="btn btn-primary" id="selectAll" onclick="select(this)">전체선택</button>
-			<button class="btn btn-danger" id="deleteAll" onclick="deleteAll()">선택삭제</button>
-		</div>
+		<c:if test="${userID == 'admin'}">
+			<div id="checkList">
+				<button class="btn btn-primary" id="selectAll" onclick="select(this)">전체선택</button>
+				<button class="btn btn-danger" id="deleteAll" onclick="deleteAll()">선택삭제</button>
+			</div>	
+		</c:if>
 		<c:if test="${userID != 'admin'}">
 			<div style="text-align: right;">
 				<a href="write.jsp" class="btn btn-primary">글쓰기</a>

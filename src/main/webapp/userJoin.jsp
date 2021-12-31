@@ -51,8 +51,13 @@
 				<input type="text" name="userID" class="form-control" placeholder="아이디를 입력하세요 (모든 게시글은 익명 입니다.)">
 			</div>
 			<div class="form-group">
-				<label>비빌번호</label>
-				<input type="password" name="userPassword" class="form-control" placeholder="비밀번호를 입력하세요">
+				<label>비밀번호</label>
+				<input type="password" id="pass_1" name="userPassword" class="form-control" onchange="isSame()" placeholder="비밀번호를 입력하세요">
+			</div>
+			<div class="form-group">
+				<label>비밀번호 확인</label>
+				<input type="password" id="pass_2" name="ConfirmPassword" class="form-control" onchange="isSame()" placeholder="비밀번호를 입력하세요">
+				<label id="same"></label>
 			</div>
 			<div class="form-group">
 				<label>이메일</label>
@@ -67,9 +72,9 @@
 	<footer class="bg-dark mt-4 p-5 text-center" style="color: #FFFFFF;">
 		Copyright &copy; 2021이기주All Rights Reserved.
 	</footer>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" 
-			integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" 
-			crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.6.0.js"
+  			integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  			crossorigin="anonymous">
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
 			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" 
@@ -78,6 +83,26 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" 
 			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
 			crossorigin="anonymous">
+	</script>
+	<script type="text/javascript">
+		function isSame() {
+			var pass1 = document.getElementById('pass_1').value;
+		    if (pass1.length < 6 || pass1.length > 16) {
+		        window.alert('비밀번호는 6글자 이상, 16글자 이하만 이용 가능합니다.');
+		        document.getElementById('pass_1').value=document.getElementById('pass_2').value='';
+		        document.getElementById('same').innerHTML='';
+		    }
+		    if(document.getElementById('pass_1').value!='' && document.getElementById('pass_2').value!='') {
+		        if(document.getElementById('pass_1').value==document.getElementById('pass_2').value) {
+		            document.getElementById('same').innerHTML='비밀번호가 일치합니다.';
+		            document.getElementById('same').style.color='blue';
+		        }
+		        else {
+		            document.getElementById('same').innerHTML='비밀번호가 일치하지 않습니다.';
+		            document.getElementById('same').style.color='red';
+		        }
+		    }
+		}
 	</script>
 </body>
 </html>
